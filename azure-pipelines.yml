@@ -11,7 +11,7 @@ pool:
 
 variables:
   imageName: azure-pipelines-canary-k8s
-  dockerRegistryServiceConnection: azure-pipelines-canary-k8s-dockerregistry
+  dockerRegistryServiceConnection: canary-k8s-docker-registry
   imageRepository: 'azure-pipelines-canary-k8s'
   containerRegistry: dongkuncontainer.azurecr.io
   tag: '$(Build.BuildId)'
