@@ -11,17 +11,73 @@ pool:
 
 variables:
   imageName: azure-pipelines-canary-k8s
+  dockerRegistryServiceConnection: azure-pipelines-canary-k8s
+  imageRepository: 'azure-pipelines-canary-k8s'
+  containerRegistry: dongkuncontainer.azurecr.io
+  tag: '$(Build.BuildId)'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- stage: Build
+  displayName: Build stage
+  jobs:
+    - job: Build
+      displayName: Build
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: Docker@2
+          displayName: Build and push image
+          inputs:
+            containerRegistry: $(dockerRegistryServiceConnection)
+            repository: $(imageName)
+            command: buildAndPush
+            Dockerfile: app/Dockerfile
+            tags: |
+              $(tag)
 
-- task:Docker@2
-  displayName:'Build and push image'
-  inputs:
-      containerRegistry:azure-pipelines-canary-k8s
-      repository:$(imageName)
-      command: buildAndPush
-      Dockerfile: app/Dockerfile
-      tags: |
-        $(Build.BuildId)
+        - upload: manifests
+          artifact: manifests
+
+        - upload: misc
+          artifact: misc
+
+- stage: DeployCanary
+  displayName: Deploy canary
+  dependsOn: Build
+  condition: succeeded()
+
+  jobs:
+    - deployment: Deploycanary
+      displayName: Deploy canary
+      pool:
+        vmImage: ubuntu-latest
+      environment: 'akscanary.canarydemo'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: KubernetesManifest@0
+                displayName: Create imagePullSecret
+                inputs:
+                  action: createSecret
+                  secretName: azure-pipelines-canary-k8s
+                  dockerRegistryEndpoint: azure-pipelines-canary-k8s
+
+              - task: KubernetesManifest@0
+                displayName: Deploy to Kubernetes cluster
+                inputs:
+                  action: 'deploy'
+                  strategy: "canary"
+                  percentage: "25"
+                  manifests: |
+                    $(Pipeline.Workspace)/manifests/deployment.yml
+                    $(Pipeline.Workspace)/manifests/service.yml
+                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+                  imagePullSecrets: azure-pipelines-canary-k8s
+
+              - task: KubernetesManifest@0
+                displayName: Deploy Forbio and Service Monitor
+                inputs:
+                  action: 'deploy'
+                  manifests: |
+                    $(Pipeline.Workspace)/misc/*
