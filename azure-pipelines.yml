@@ -61,7 +61,7 @@ stages:
                 inputs:
                   action: createSecret
                   secretName: azure-pipelines-canary-k8s
-                  dockerRegistryEndpoint: dockerRegistryServiceConnection
+                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
               - task: KubernetesManifest@0
                 displayName: Deploy to Kubernetes cluster
