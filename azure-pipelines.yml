@@ -16,7 +16,7 @@ variables:
   containerRegistry: dongkuncontainer.azurecr.io
   tag: '$(Build.BuildId)'
 
-steps:
+stages:
 - stage: Build
   displayName: Build stage
   jobs:
