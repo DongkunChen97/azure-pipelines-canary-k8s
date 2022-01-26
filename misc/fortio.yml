@@ -4,6 +4,9 @@ metadata:
   name: fortio
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: fortio
   template:
     metadata:
       labels:
