@@ -19,7 +19,7 @@ spec:
       containers:
       - name: sampleapp
         #replace <foobar> with your container registry. Example: contosodemo.azurecr.io
-        image: dongkuncontainer.azurecr.io/azure-pipelines-canary-k8s
+        image: sharedglobalservices.azurecr.io/dongkun-canary-test
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
