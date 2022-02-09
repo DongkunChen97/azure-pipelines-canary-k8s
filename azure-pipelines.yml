@@ -10,10 +10,10 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  imageName: azure-pipelines-canary-k8s
-  dockerRegistryServiceConnection: canary-k8s-docker-registry
-  imageRepository: 'azure-pipelines-canary-k8s'
-  containerRegistry: dongkuncontainer.azurecr.io
+  imageName: dongkun-canary-test
+  dockerRegistryServiceConnection: sharedServiceConnection
+  imageRepository: 'dongkun-canary-test'
+  containerRegistry: sharedglobalservices.azurecr.io
   tag: '$(Build.BuildId)'
 
 stages:
@@ -92,7 +92,7 @@ stages:
     displayName: Promote Canary
     pool:
       vmImage: ubuntu-latest
-    environment: 'akspromote.canarydemo'
+    environment: 'akspromote.dongkun'
     strategy:
       runOnce:
         deploy:
@@ -116,7 +116,7 @@ stages:
     displayName: Reject Canary
     pool:
       vmImage: ubuntu-latest
-    environment: 'akscanary.canarydemo'
+    environment: 'akscanary.dongkun'
     strategy:
       runOnce:
         deploy:
