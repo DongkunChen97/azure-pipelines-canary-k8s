@@ -51,7 +51,7 @@ stages:
       displayName: Deploy canary
       pool:
         vmImage: ubuntu-latest
-      environment: 'akscanary.canarydemo'
+      environment: 'dongkun-canarytest.dongkun'
       strategy:
         runOnce:
           deploy:
@@ -92,7 +92,7 @@ stages:
     displayName: Promote Canary
     pool:
       vmImage: ubuntu-latest
-    environment: 'akspromote.dongkun'
+    environment: 'dongkun-canarytest.dongkun'
     strategy:
       runOnce:
         deploy:
@@ -116,7 +116,7 @@ stages:
     displayName: Reject Canary
     pool:
       vmImage: ubuntu-latest
-    environment: 'akscanary.dongkun'
+    environment: 'dongkun-canarytest.dongkun'
     strategy:
       runOnce:
         deploy:
