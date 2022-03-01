@@ -10,7 +10,6 @@ spec:
     matchLabels:
       app: sampleapp
   serviceName: "Sample-App"
-  minReadySeconds: 10
   template:
     metadata:
       annotations:
