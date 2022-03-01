@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: sampleapp
   labels:
@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: sampleapp
+  serviceName: "Sample-App"
+  minReadySeconds: 10
   template:
     metadata:
       annotations:
@@ -16,6 +18,7 @@ spec:
       labels:
         app: sampleapp
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
       - name: sampleapp
         #replace <foobar> with your container registry. Example: contosodemo.azurecr.io
