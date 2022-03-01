@@ -10,6 +10,9 @@ spec:
     matchLabels:
       app: sampleapp
   serviceName: "sample-app-svc"
+  updateStrategy:
+    rollingUpdate:
+      partition: 2
   template:
     metadata:
       annotations:
