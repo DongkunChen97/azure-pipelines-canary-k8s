@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: sampleapp
-  serviceName: "Sample-App"
+  serviceName: "sample-app-svc"
   template:
     metadata:
       annotations:
