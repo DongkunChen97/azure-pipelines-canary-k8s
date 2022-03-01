@@ -105,25 +105,25 @@ stages:
 #              manifests: '$(Pipeline.Workspace)/manifests/*'
 #              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
 #              imagePullSecrets: '$(imagePullSecret)'
-
-- stage: RejectCanary
-  displayName: Reject canary
-  dependsOn: PromoteRejectCanary
-  condition: failed()
-
-  jobs:
-  - deployment: RejectCanary
-    displayName: Reject Canary
-    pool:
-      vmImage: ubuntu-latest
-    environment: 'dongkun-canarytest.dongkun'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: KubernetesManifest@0
-            displayName: reject canary
-            inputs:
-              action: 'reject'
-              strategy: 'canary'
-              manifests: '$(Pipeline.Workspace)/manifests/*'
+#
+#- stage: RejectCanary
+#  displayName: Reject canary
+#  dependsOn: PromoteRejectCanary
+#  condition: failed()
+#
+#  jobs:
+#  - deployment: RejectCanary
+#    displayName: Reject Canary
+#    pool:
+#      vmImage: ubuntu-latest
+#    environment: 'dongkun-canarytest.dongkun'
+#    strategy:
+#      runOnce:
+#        deploy:
+#          steps:
+#          - task: KubernetesManifest@0
+#            displayName: reject canary
+#            inputs:
+#              action: 'reject'
+#              strategy: 'canary'
+#              manifests: '$(Pipeline.Workspace)/manifests/*'
