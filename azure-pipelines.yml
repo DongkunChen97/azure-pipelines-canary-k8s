@@ -67,8 +67,8 @@ stages:
                 displayName: Deploy to Kubernetes cluster
                 inputs:
                   action: 'deploy'
-                  strategy: "canary"
-                  percentage: "25"
+#                  strategy: "canary"
+#                  percentage: "25"
                   manifests: |
                     $(Pipeline.Workspace)/manifests/deployment.yml
                     $(Pipeline.Workspace)/manifests/service.yml
@@ -81,30 +81,30 @@ stages:
                   action: 'deploy'
                   manifests: |
                     $(Pipeline.Workspace)/misc/*
-
-- stage: PromoteRejectCanary
-  displayName: Promote or Reject canary
-  dependsOn: DeployCanary
-  condition: succeeded()
-
-  jobs:
-  - deployment: PromoteCanary
-    displayName: Promote Canary
-    pool:
-      vmImage: ubuntu-latest
-    environment: 'dongkun-canarytest.dongkun'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: KubernetesManifest@0
-            displayName: promote canary
-            inputs:
-              action: 'promote'
-              strategy: 'canary'
-              manifests: '$(Pipeline.Workspace)/manifests/*'
-              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-              imagePullSecrets: '$(imagePullSecret)'
+#
+#- stage: PromoteRejectCanary
+#  displayName: Promote or Reject canary
+#  dependsOn: DeployCanary
+#  condition: succeeded()
+#
+#  jobs:
+#  - deployment: PromoteCanary
+#    displayName: Promote Canary
+#    pool:
+#      vmImage: ubuntu-latest
+#    environment: 'dongkun-canarytest.dongkun'
+#    strategy:
+#      runOnce:
+#        deploy:
+#          steps:
+#          - task: KubernetesManifest@0
+#            displayName: promote canary
+#            inputs:
+#              action: 'promote'
+#              strategy: 'canary'
+#              manifests: '$(Pipeline.Workspace)/manifests/*'
+#              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+#              imagePullSecrets: '$(imagePullSecret)'
 
 - stage: RejectCanary
   displayName: Reject canary
