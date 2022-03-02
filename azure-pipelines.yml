@@ -87,6 +87,7 @@ stages:
       dependsOn: Deploycanary
       pool:
         vmImage: ubuntu-latest
+      environment: 'dongkun-canarytest.dongkun'
       steps:
         - task: KubernetesManifest@0
           displayName: promote partition rolling update
