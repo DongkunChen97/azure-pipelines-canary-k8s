@@ -23,7 +23,6 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: sampleapp
-        #replace <foobar> with your container registry. Example: contosodemo.azurecr.io
         image: sharedglobalservices.azurecr.io/dongkun-canary-test
         imagePullPolicy: Always
         ports:

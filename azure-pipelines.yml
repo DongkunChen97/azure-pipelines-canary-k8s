@@ -81,6 +81,20 @@ stages:
                   action: 'deploy'
                   manifests: |
                     $(Pipeline.Workspace)/misc/*
+
+    - job: promote
+      displayName: promote deploy
+      dependsOn: Deploycanary
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - task: KubernetesManitest@0
+          displayName: promote partition rolling update
+          inputs:
+            action: 'deploy'
+            manifests: $(Pipeline.Workspace)/manifests/deployment.yml
+            containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+            imagePullSecrets: azure-pipelines-canary-k8s
 #
 #- stage: PromoteRejectCanary
 #  displayName: Promote or Reject canary
