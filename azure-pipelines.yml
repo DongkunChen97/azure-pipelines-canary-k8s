@@ -41,8 +41,8 @@ stages:
         - upload: misc
           artifact: misc
 
-- stage: DeployCanary
-  displayName: Deploy canary
+- stage: DeployFirst
+  displayName: Deploy first
   dependsOn: Build
   condition: succeeded()
 
@@ -82,9 +82,14 @@ stages:
                   manifests: |
                     $(Pipeline.Workspace)/misc/*
 
+- stage:
+  displayName: promote stage
+  dependsOn: DeployFirst
+  condition: succeeded()
+
+  jobs:
     - deployment: promote
       displayName: promote deploy
-      dependsOn: Deploycanary
       pool:
         vmImage: ubuntu-latest
       environment: 'dongkun-canarytest.dongkun'
