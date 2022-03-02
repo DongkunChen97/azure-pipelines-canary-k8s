@@ -88,7 +88,7 @@ stages:
       pool:
         vmImage: ubuntu-latest
       steps:
-        - task: KubernetesManitest@0
+        - task: KubernetesManifest@0
           displayName: promote partition rolling update
           inputs:
             action: 'deploy'
