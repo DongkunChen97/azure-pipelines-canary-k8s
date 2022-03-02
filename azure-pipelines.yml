@@ -87,7 +87,6 @@ stages:
       dependsOn: Deploycanary
       pool:
         vmImage: ubuntu-latest
-      environment: 'dongkun-canarytest.dongkun'
       steps:
         - task: KubernetesManifest@0
           displayName: promote partition rolling update
@@ -96,6 +95,7 @@ stages:
             manifests: $(Pipeline.Workspace)/manifests/deployment.yml
             containers: '$(containerRegistry)/$(imageRepository):$(tag)'
             imagePullSecrets: azure-pipelines-canary-k8s
+            kubernetesServiceConnection: dongkun-canarytest-k8s
 #
 #- stage: PromoteRejectCanary
 #  displayName: Promote or Reject canary
