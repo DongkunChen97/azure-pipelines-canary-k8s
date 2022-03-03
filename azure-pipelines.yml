@@ -45,7 +45,7 @@ stages:
         - script: |
             export HELM_EXPERIMENTAL_OCI=1
             helm package $(System.DefaultWorkingDirectory)/helm/app
-            helm push app-0.0.1.tgz oci://sharedglobalservices.azurecr.io/delivery/helm
+            helm push sample-app-0.0.1.tgz oci://sharedglobalservices.azurecr.io/delivery/helm
           displayName: build helm chart
 
         - upload: manifests
