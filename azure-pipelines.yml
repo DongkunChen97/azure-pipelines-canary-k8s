@@ -88,6 +88,7 @@ stages:
                   chartPath: $(System.DefaultWorkingDirectory)/sample-app-0.0.1.tgz
                   releaseName: rls-sample-app
                   install: true
+                  waitForExecution: false
                   arguments: >
                     --cleanup-on-fail
 
@@ -133,7 +134,7 @@ stages:
 
 
 
-- stage:
+- stage: promote1
   displayName: promote stage
   dependsOn: DeployFirst
   condition: succeeded()
@@ -141,7 +142,7 @@ stages:
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: 2
+        partitionValue: 3
 
 #  jobs:
 #    - deployment: promote
@@ -211,3 +212,33 @@ stages:
 #              action: 'reject'
 #              strategy: 'canary'
 #              manifests: '$(Pipeline.Workspace)/manifests/*'
+
+- stage: promote2
+  displayName: first promote stage
+  dependsOn: promote1
+  condition: succeeded()
+
+  jobs:
+    - template: templates/helm-deploy.yml
+      parameters:
+        partitionValue: 2
+
+- stage: promote3
+  displayName: second promote stage
+  dependsOn: promote2
+  condition: succeeded()
+
+  jobs:
+    - template: templates/helm-deploy.yml
+      parameters:
+        partitionValue: 1
+
+- stage: finalPromote
+  displayName: final promote
+  dependsOn: promote3
+  condition: succeeded()
+
+  jobs:
+    - template: templates/helm-deploy.yml
+      parameters:
+        partitionValue: 0
