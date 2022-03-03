@@ -83,6 +83,7 @@ stages:
                   azureResourceGroup: dev-grf-del-iad-rg
                   kubernetesCluster: dev-grf-del-iad-aks
                   namespace: dongkun
+                  useClusterAdmin: true
                   command: upgrade
                   chartType: filepath
                   chartPath: $(System.DefaultWorkingDirectory)/sample-app-0.0.1.tgz
