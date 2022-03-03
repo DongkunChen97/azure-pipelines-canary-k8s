@@ -1,0 +1,31 @@
+parameters:
+  - name: partitionValue
+
+jobs:
+  - deployment: helmDeploy
+    displayName: deploy app by helm
+    environment: "dongkun-canarytest.dongkun"
+    variables:
+      partition: ${{ parameters.partitionValue }}
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: HelmDeploy@0
+              displayName: do deploy
+              inputs:
+                connectionType: "Azure Resource Manager"
+                azureSubscription: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
+                azureResourceGroup: dev-grf-del-iad-rg
+                kubernetesCluster: dev-grf-del-iad-aks
+                namespace: dongkun
+                command: upgrade
+                chartType: filepath
+                chartPath: $(System.DefaultWorkingDirectory)/sample-app-0.0.1.tgz
+                releaseName: rls-sample-app
+                install: true
+                waitForExecution: false
+                arguments: >
+                  --cleanup-on-fail
+                  --set partitionValue=$(partitionValue)

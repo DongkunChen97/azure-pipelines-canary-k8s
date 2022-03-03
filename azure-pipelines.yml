@@ -139,24 +139,33 @@ stages:
   condition: succeeded()
 
   jobs:
-    - deployment: promote
-      displayName: promote deploy
-      pool:
-        vmImage: ubuntu-latest
-      environment: 'dongkun-canarytest.dongkun'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: KubernetesManifest@0
-                displayName: promote partition rolling update
-                env:
-                  PARTITION_VALUE: 2
-                inputs:
-                  action: 'deploy'
-                  manifests: $(Pipeline.Workspace)/manifests/deployment.yml
-                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-                  imagePullSecrets: azure-pipelines-canary-k8s
+    - template: templates/helm-deploy.yml
+      displayName: promote
+      parameters:
+        - partitionValue: 2
+
+#  jobs:
+#    - deployment: promote
+#      displayName: promote deploy
+#      pool:
+#        vmImage: ubuntu-latest
+#      environment: 'dongkun-canarytest.dongkun'
+#      strategy:
+#        runOnce:
+#          deploy:
+#            steps:
+#              - task: KubernetesManifest@0
+#                displayName: promote partition rolling update
+#                env:
+#                  PARTITION_VALUE: 2
+#                inputs:
+#                  action: 'deploy'
+#                  manifests: $(Pipeline.Workspace)/manifests/deployment.yml
+#                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+#                  imagePullSecrets: azure-pipelines-canary-k8s
+
+
+
 #
 #- stage: PromoteRejectCanary
 #  displayName: Promote or Reject canary
