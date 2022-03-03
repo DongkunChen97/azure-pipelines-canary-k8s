@@ -37,7 +37,7 @@ stages:
 
         - task: HelmInstaller@0
           displayName: install helm
-          input:
+          inputs:
             helmVersion: "v3.7.1"
             installKubectl: false
             checkLatestHelmVersion: false
