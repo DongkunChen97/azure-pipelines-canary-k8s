@@ -21,6 +21,8 @@ spec:
         app: sampleapp
     spec:
       terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: secreg
       containers:
       - name: sampleapp
         image: sharedglobalservices.azurecr.io/dongkun-canary-test
@@ -28,7 +30,5 @@ spec:
         ports:
         - containerPort: 8000
         - containerPort: 8080
-      { { - with .Values.imagePullSecrets } }
-      imagePullSecrets:
-        { { - toYaml . | nindent 8 } }
-      { { - end } }
+
+
