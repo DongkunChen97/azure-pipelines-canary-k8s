@@ -89,7 +89,7 @@ stages:
                   releaseName: rls-sample-app
                   install: true
                   arguments: >
-                    - cleanup-on-fail
+                    --cleanup-on-fail
 
 
 
