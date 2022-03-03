@@ -5,5 +5,5 @@ metadata:
   namespace: dongkun
 data:
   acc: dongkun
-  partition: 4
+  partition: "4"
   pwd: www
