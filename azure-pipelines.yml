@@ -61,7 +61,7 @@ stages:
   condition: succeeded()
 
   jobs:
-    - template: templates/deployment.yml
+    - template: helm/app/templates/deployment.yml
       parameters:
         partitionValue: 4
 
