@@ -60,10 +60,25 @@ stages:
   dependsOn: Build
   condition: succeeded()
 
+  parameters:
+    partitionValue: 4
+
   jobs:
-    - template: helm/app/templates/deployment.yml
-      parameters:
-        partitionValue: 4
+    - deployment: helmDeploy
+      dispalyName: deploy app by helm
+      environment: "dongkun-canarytest.dongkun"
+
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - script: |
+                  export HELM_EXPERIMENTAL_OCI=1
+                  helm registry login sharedglobalservices.azurecr.io --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
+                  helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
+                displayName: pull helm chart
+
+
 
 #  jobs:
 #    - deployment: Deploycanary
