@@ -28,4 +28,4 @@ jobs:
                 waitForExecution: false
                 arguments: >
                   --cleanup-on-fail
-                  --set partitionValue=$(partitionValue)
+                  --set partitionValue=$(partition)
