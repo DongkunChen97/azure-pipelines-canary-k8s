@@ -75,6 +75,22 @@ stages:
                   helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
                 displayName: pull helm chart
 
+              - task: HelmDeploy@0
+                displayName: do deploy
+                input:
+                  connectionType: "Azure Resource Manager"
+                  azureSubscription: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
+                  azureResourceGroup: dev-grf-del-iad-rg
+                  kubernetesCluster: dev-grf-del-iad-aks
+                  namespace: dongkun
+                  command: upgrade
+                  chartType: filepath
+                  chartPath: $(System.DefaultWorkingDirectory)/sample-app-0.0.1.tgz
+                  releaseName: rls-sample-app
+                  install: true
+                  arguments: >
+                    - cleanup-on-fail
+
 
 
 #  jobs:
