@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sampleapp
+  labels:
+    app: sampleapp
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: sampleapp
+  serviceName: "sample-app-svc"
+  updateStrategy:
+    rollingUpdate:
+      partition: 4
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+      labels:
+        app: sampleapp
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: sampleapp
+        image: sharedglobalservices.azurecr.io/dongkun-canary-test
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        - containerPort: 8080
+status:
+  replicas: 4

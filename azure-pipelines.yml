@@ -42,6 +42,11 @@ stages:
             installKubectl: false
             checkLatestHelmVersion: false
 
+        - script: |
+            helm package $(System.DefaultWorkingDirectory)/helm/app
+            helm push app-0.0.1.tgz oci://sharedglobalservices.azurecr.io/delivery/helm
+          displayName: build helm chart
+
         - upload: manifests
           artifact: manifests
 
@@ -89,6 +94,7 @@ stages:
                   action: 'deploy'
                   manifests: |
                     $(Pipeline.Workspace)/misc/*
+
 
 - stage:
   displayName: promote stage

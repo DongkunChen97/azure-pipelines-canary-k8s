@@ -1,0 +1,6 @@
+apiVersion: v1
+name: sample-app
+description: canary demo
+type: application
+version: 0.0.1
+appVersion: "0.01"
