@@ -61,41 +61,48 @@ stages:
   condition: succeeded()
 
   jobs:
-    - deployment: Deploycanary
-      displayName: Deploy canary
-      pool:
-        vmImage: ubuntu-latest
-      environment: 'dongkun-canarytest.dongkun'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: KubernetesManifest@0
-                displayName: Create imagePullSecret
-                inputs:
-                  action: createSecret
-                  secretName: azure-pipelines-canary-k8s
-                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+    - template: templates/deployment.yml
+      parameters:
+        partitionValue: 4
 
-              - task: KubernetesManifest@0
-                displayName: Deploy to Kubernetes cluster
-                env:
-                  PARTITION_VALUE: 4
-                inputs:
-                  action: 'deploy'
-#                  strategy: "canary"
-#                  percentage: "25"
-                  manifests: |
-                    $(Pipeline.Workspace)/manifests/*
-                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-                  imagePullSecrets: azure-pipelines-canary-k8s
+#  jobs:
+#    - deployment: Deploycanary
+#      displayName: Deploy canary
+#      pool:
+#        vmImage: ubuntu-latest
+#      environment: 'dongkun-canarytest.dongkun'
+#      strategy:
+#        runOnce:
+#          deploy:
+#            steps:
+#              - task: KubernetesManifest@0
+#                displayName: Create imagePullSecret
+#                inputs:
+#                  action: createSecret
+#                  secretName: azure-pipelines-canary-k8s
+#                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+#
+#              - task: KubernetesManifest@0
+#                displayName: Deploy to Kubernetes cluster
+#                env:
+#                  PARTITION_VALUE: 4
+#                inputs:
+#                  action: 'deploy'
+##                  strategy: "canary"
+##                  percentage: "25"
+#                  manifests: |
+#                    $(Pipeline.Workspace)/manifests/*
+#                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
+#                  imagePullSecrets: azure-pipelines-canary-k8s
+#
+#              - task: KubernetesManifest@0
+#                displayName: Deploy Forbio and Service Monitor
+#                inputs:
+#                  action: 'deploy'
+#                  manifests: |
+#                    $(Pipeline.Workspace)/misc/*
+#
 
-              - task: KubernetesManifest@0
-                displayName: Deploy Forbio and Service Monitor
-                inputs:
-                  action: 'deploy'
-                  manifests: |
-                    $(Pipeline.Workspace)/misc/*
 
 
 - stage:
