@@ -140,9 +140,8 @@ stages:
 
   jobs:
     - template: templates/helm-deploy.yml
-      displayName: promote
       parameters:
-        - partitionValue: 2
+        partitionValue: 2
 
 #  jobs:
 #    - deployment: promote
