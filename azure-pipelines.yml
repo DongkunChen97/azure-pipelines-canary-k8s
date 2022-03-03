@@ -60,12 +60,9 @@ stages:
   dependsOn: Build
   condition: succeeded()
 
-  parameters:
-    partitionValue: 4
-
   jobs:
     - deployment: helmDeploy
-      dispalyName: deploy app by helm
+      displayName: deploy app by helm
       environment: "dongkun-canarytest.dongkun"
 
       strategy:
