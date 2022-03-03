@@ -5,3 +5,4 @@ metadata:
   namespace: dongkun
 data:
   acc: dongkun
+  partition: 4

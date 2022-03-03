@@ -35,6 +35,13 @@ stages:
             tags: |
               $(tag)
 
+        - task: HelmInstaller@0
+          displayName: install helm
+          input:
+            helmVersion: "v3.7.1"
+            installKubectl: false
+            checkLatestHelmVersion: false
+
         - upload: manifests
           artifact: manifests
 
