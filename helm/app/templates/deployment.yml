@@ -28,5 +28,8 @@ spec:
         ports:
         - containerPort: 8000
         - containerPort: 8080
+      imagePullSecrets:
+        - name: secreg
+
 status:
   replicas: 4
