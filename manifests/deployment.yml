@@ -12,7 +12,7 @@ spec:
   serviceName: "sample-app-svc"
   updateStrategy:
     rollingUpdate:
-      partition: 0
+      partition: ${{ PARTITION_VALUE }}
   template:
     metadata:
       annotations:
