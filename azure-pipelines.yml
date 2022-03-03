@@ -72,8 +72,7 @@ stages:
 #                  strategy: "canary"
 #                  percentage: "25"
                   manifests: |
-                    $(Pipeline.Workspace)/manifests/deployment.yml
-                    $(Pipeline.Workspace)/manifests/service.yml
+                    $(Pipeline.Workspace)/manifests/*
                   containers: '$(containerRegistry)/$(imageRepository):$(tag)'
                   imagePullSecrets: azure-pipelines-canary-k8s
 
