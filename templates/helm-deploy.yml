@@ -1,6 +1,7 @@
 parameters:
   - name: partitionValue
   - name: buildId
+  - name: secretName
 
 jobs:
   - deployment: helmDeploy
@@ -9,6 +10,7 @@ jobs:
     variables:
       partition: ${{ parameters.partitionValue }}
       buildId: ${{ parameters.buildId }}
+      secretName: ${{ parameters.secretName }}
 
     strategy:
       runOnce:
@@ -39,3 +41,4 @@ jobs:
                   --cleanup-on-fail
                   --set partitionValue=$(partition)
                   --set buildId=$(tag)
+                  --set imagePullSecrets=$(secretName)

@@ -155,6 +155,7 @@ stages:
       parameters:
         partitionValue: 3
         buildId: $(tag)
+        secretName: $(secretName)
 
 #  jobs:
 #    - deployment: promote
@@ -226,7 +227,7 @@ stages:
 #              manifests: '$(Pipeline.Workspace)/manifests/*'
 
 - stage: promote2
-  displayName: first promote stage
+  displayName: second promote stage
   dependsOn: promote1
   condition: succeeded()
 
@@ -235,9 +236,10 @@ stages:
       parameters:
         partitionValue: 2
         buildId: $(tag)
+        secretName: $(secretName)
 
 - stage: promote3
-  displayName: second promote stage
+  displayName: third promote stage
   dependsOn: promote2
   condition: succeeded()
 
@@ -246,6 +248,7 @@ stages:
       parameters:
         partitionValue: 1
         buildId: $(tag)
+        secretName: $(secretName)
 
 - stage: finalPromote
   displayName: final promote
@@ -257,3 +260,4 @@ stages:
       parameters:
         partitionValue: 0
         buildId: $(tag)
+        secretName: $(secretName)
