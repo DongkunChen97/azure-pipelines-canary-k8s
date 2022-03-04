@@ -77,7 +77,7 @@ stages:
                 displayName: pull helm chart
 
               - task: KubernetesManifest@0
-                dispalyName: create secret
+                displayName: create secret
                 inputs:
                   action: createSecret
                   secretName: $(secretName)
