@@ -83,7 +83,6 @@ stages:
                   secretName: $(secretName)
                   dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
-
               - task: HelmDeploy@0
                 displayName: do deploy
                 inputs:
