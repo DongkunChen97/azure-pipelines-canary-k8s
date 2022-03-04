@@ -16,6 +16,9 @@ variables:
   containerRegistry: sharedglobalservices.azurecr.io
   tag: '$(Build.BuildId)'
   secretName: "mysecret"
+  azureSubscriptionEndpoint: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
+  azureResourceGroup: dev-grf-del-iad-rg
+  kubernetesCluster: dev-grf-del-iad-aks
 
 stages:
 - stage: Build
@@ -56,6 +59,19 @@ stages:
         - upload: misc
           artifact: misc
 
+        - task: Kubernetes@1
+          displayName: kubectl apply
+          inputs:
+            connectionType: Azure Resource Manager
+            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+            azureResourceGroup: $(azureResourceGroup)
+            kubernetesCluster: $(kubernetesCluster)
+            useClusterAdmin: true
+
+        - script: |
+            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py
+          displayName: test for python
+
 - stage: DeployFirst
   displayName: Deploy first
   dependsOn: Build
@@ -87,9 +103,9 @@ stages:
                 displayName: do deploy
                 inputs:
                   connectionType: "Azure Resource Manager"
-                  azureSubscription: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
-                  azureResourceGroup: dev-grf-del-iad-rg
-                  kubernetesCluster: dev-grf-del-iad-aks
+                  azureSubscription: $(azureSubscriptionEndpoint)
+                  azureResourceGroup: $(azureResourceGroup)
+                  kubernetesCluster: $(kubernetesCluster)
                   namespace: dongkun
                   useClusterAdmin: true
                   command: upgrade
