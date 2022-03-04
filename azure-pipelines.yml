@@ -69,7 +69,9 @@ stages:
             useClusterAdmin: true
 
         - script: |
-            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py
+            describe=`kubectl describe statefulset sampleapp -n dongkun`
+            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
+
           displayName: test for python
 
 - stage: DeployFirst

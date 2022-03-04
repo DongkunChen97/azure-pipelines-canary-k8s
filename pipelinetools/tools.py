@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-import commands
-
-sCommand = "kubectl describe statefulset sampleapp -n dongkun"
+import sys
 
 
-def GetPodsCount():
-    sOutput = commands.getoutput(sCommand)
-    lOutput = sOutput.split("\n")
+def GetPodsCount(sDescribe):
+    lOutput = sDescribe.split("\n")
     for sLine in lOutput:
         if sLine.startswith("Replicas:"):
             lWords = sLine.split(" ")
@@ -19,4 +16,6 @@ def GetPodsCount():
                 print("99999999999999999999999")
                 return
 
-GetPodsCount()
+if __name__ == '__main__':
+    sDescribe = sys.argv[1]
+    GetPodsCount(sDescribe)
