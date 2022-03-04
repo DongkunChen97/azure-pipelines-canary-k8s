@@ -22,7 +22,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       imagePullSecrets:
-      - name: secreg
+      - name:  {{ .Value.imagePullSecrets }}
       containers:
       - name: sampleapp
         image: sharedglobalservices.azurecr.io/dongkun-canary-test

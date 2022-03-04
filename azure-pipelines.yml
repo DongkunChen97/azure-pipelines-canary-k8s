@@ -15,6 +15,7 @@ variables:
   imageRepository: 'dongkun-canary-test'
   containerRegistry: sharedglobalservices.azurecr.io
   tag: '$(Build.BuildId)'
+  secretName: "mysecret"
 
 stages:
 - stage: Build
@@ -75,6 +76,14 @@ stages:
                   helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
                 displayName: pull helm chart
 
+              - task: KubernetesManifest@0
+                dispalyName: create secret
+                inputs:
+                  action: createSecret
+                  secretName: $(secretName)
+                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+
               - task: HelmDeploy@0
                 displayName: do deploy
                 inputs:
@@ -92,6 +101,7 @@ stages:
                   waitForExecution: false
                   arguments: >
                     --cleanup-on-fail
+                    --set imagePullSecrets=$(secretName)
 
 
 
