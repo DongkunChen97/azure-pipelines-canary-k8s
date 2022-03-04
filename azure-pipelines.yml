@@ -74,6 +74,7 @@ stages:
             useClusterAdmin: true
 
 #        - script: |
+#            kubectl describe statefulset sampleapp -n dongkun
 #            describe=`kubectl describe statefulset sampleapp -n dongkun`
 #            echo $describe
 #            echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
