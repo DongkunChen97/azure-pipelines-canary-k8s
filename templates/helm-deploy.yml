@@ -1,5 +1,6 @@
 parameters:
   - name: partitionValue
+  - name: buildId
 
 jobs:
   - deployment: helmDeploy
@@ -7,6 +8,7 @@ jobs:
     environment: "dongkun-canarytest.dongkun"
     variables:
       partition: ${{ parameters.partitionValue }}
+      buildId: ${{ parameters.buildId }}
 
     strategy:
       runOnce:
@@ -36,3 +38,4 @@ jobs:
                 arguments: >
                   --cleanup-on-fail
                   --set partitionValue=$(partition)
+                  --set buildId=$(tag)

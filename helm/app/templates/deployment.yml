@@ -25,7 +25,7 @@ spec:
       - name:  {{ .Values.imagePullSecrets }}
       containers:
       - name: sampleapp
-        image: sharedglobalservices.azurecr.io/dongkun-canary-test
+        image: sharedglobalservices.azurecr.io/dongkun-canary-test:{{ .Values.buildId }}
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

@@ -101,6 +101,7 @@ stages:
                   arguments: >
                     --cleanup-on-fail
                     --set imagePullSecrets=$(secretName)
+                    --set buildId=$(tag)
 
 
 
@@ -153,6 +154,7 @@ stages:
     - template: templates/helm-deploy.yml
       parameters:
         partitionValue: 3
+        buildId: $(tag)
 
 #  jobs:
 #    - deployment: promote
@@ -232,6 +234,7 @@ stages:
     - template: templates/helm-deploy.yml
       parameters:
         partitionValue: 2
+        buildId: $(tag)
 
 - stage: promote3
   displayName: second promote stage
@@ -242,6 +245,7 @@ stages:
     - template: templates/helm-deploy.yml
       parameters:
         partitionValue: 1
+        buildId: $(tag)
 
 - stage: finalPromote
   displayName: final promote
@@ -252,3 +256,4 @@ stages:
     - template: templates/helm-deploy.yml
       parameters:
         partitionValue: 0
+        buildId: $(tag)
