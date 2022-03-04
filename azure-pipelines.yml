@@ -70,6 +70,9 @@ stages:
 
         - script: |
             describe=`kubectl describe statefulset sampleapp -n dongkun`
+            echo $describe
+            echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+            echo "$(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe"
             python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
 
           displayName: test for python
