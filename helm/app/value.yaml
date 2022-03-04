@@ -1,3 +1,3 @@
-partitionValue: 4
+partitionValue: 9
 imagePullSecrets: mysecret
 buildId: latest

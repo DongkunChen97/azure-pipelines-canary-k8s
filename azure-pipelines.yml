@@ -19,6 +19,11 @@ variables:
   azureSubscriptionEndpoint: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
   azureResourceGroup: dev-grf-del-iad-rg
   kubernetesCluster: dev-grf-del-iad-aks
+  partitionValueFirstPromote: 8
+  partitionValueSecondPromote: 5
+  partitionValueThirdPromote: 2
+  partitionValueFinalPromote: 0
+
 
 stages:
 - stage: Build
@@ -68,14 +73,14 @@ stages:
             kubernetesCluster: $(kubernetesCluster)
             useClusterAdmin: true
 
-        - script: |
-            describe=`kubectl describe statefulset sampleapp -n dongkun`
-            echo $describe
-            echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-            echo "$(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe"
-            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
-
-          displayName: test for python
+#        - script: |
+#            describe=`kubectl describe statefulset sampleapp -n dongkun`
+#            echo $describe
+#            echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+#            echo "$(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe"
+#            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
+#
+#          displayName: test for python
 
 - stage: DeployFirst
   displayName: Deploy first
@@ -174,7 +179,7 @@ stages:
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: 3
+        partitionValue: $(partitionValueFirstPromote)
         buildId: $(tag)
         secretName: $(secretName)
 
@@ -255,7 +260,7 @@ stages:
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: 2
+        partitionValue: $(partitionValueSecondPromote)
         buildId: $(tag)
         secretName: $(secretName)
 
@@ -267,7 +272,7 @@ stages:
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: 1
+        partitionValue: $(partitionValueThirdPromote)
         buildId: $(tag)
         secretName: $(secretName)
 
@@ -279,6 +284,6 @@ stages:
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: 0
+        partitionValue: $(partitionValueFinalPromote)
         buildId: $(tag)
         secretName: $(secretName)
