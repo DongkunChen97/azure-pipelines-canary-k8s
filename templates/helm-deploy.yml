@@ -41,7 +41,7 @@ jobs:
     variables:
       partition: $[ dependencies.helmInit.outputs['GetPartition1.truePartition'] ]
       buildId: ${{ parameters.buildId }}
-      secretName: ${{ parameters.secretName }}
+      secretname: ${{ parameters.secretName }}
     strategy:
       runOnce:
         deploy:
@@ -65,4 +65,4 @@ jobs:
                   --cleanup-on-fail
                   --set partitionValue=$(partition)
                   --set buildId=$(buildId)
-                  --set imagePullSecrets=$(secretName)
+                  --set imagePullSecrets=$(secretname)
