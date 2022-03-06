@@ -98,9 +98,11 @@ stages:
       pool:
         vmImage: ubuntu-latest
       dependsOn: Build
+      variables:
+        myVal: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
       steps:
         - bash: |
-            echo $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
+            echo $(myVal)
           displayName: show pods number
           name: ShowPodsNumber
 
