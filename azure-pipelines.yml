@@ -76,6 +76,10 @@ stages:
         - task: Kubernetes@1
           displayName: kubectl get pods number
           inputs:
+            connectionType: Azure Resource Manager
+            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+            azureResourceGroup: $(azureResourceGroup)
+            kubernetesCluster: $(kubernetesCluster)
             command: get
             arguments: statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'
 
