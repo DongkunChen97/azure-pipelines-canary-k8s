@@ -76,7 +76,7 @@ stages:
 
         - task: AzureCLI@2
           inputs:
-            azureSubription: $(azureSubscriptionEndpoint)
+            azureSubscription: $(azureSubscriptionEndpoint)
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
