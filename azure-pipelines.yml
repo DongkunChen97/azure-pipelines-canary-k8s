@@ -73,15 +73,19 @@ stages:
             kubernetesCluster: $(kubernetesCluster)
             useClusterAdmin: true
 
+        - task: Kubermetes@1
+          displayName: kubectl get pods number
+          inputs:
+            command: get
+            arguments: statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'
+
 #        - script: |
 #            kubectl describe statefulset sampleapp -n dongkun
 #            describe=`kubectl describe statefulset sampleapp -n dongkun`
-#            echo $describe
-#            echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-#            echo "$(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe"
 #            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
 #
 #          displayName: test for python
+
 
 - stage: DeployFirst
   displayName: Deploy first
