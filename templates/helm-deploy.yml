@@ -46,6 +46,8 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - bash: |
+                ls $(System.DefaultWorkingDirectory)
             - task: HelmDeploy@0
               displayName: do deploy
               inputs:
