@@ -30,7 +30,7 @@ stages:
 - stage: Build
   displayName: Build stage
   jobs:
-    - job: Build
+    - job: BuildJob
       displayName: Build
       pool:
         vmImage: ubuntu-latest
@@ -82,7 +82,7 @@ stages:
   dependsOn: Build
   condition: succeeded()
   variables:
-    podnumber: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
+    podnumber: $[dependencies.Build.outputs['BuildJob.GetPodsNum.podsNumber']]
 
   jobs:
     - template: templates/helm-deploy.yml
