@@ -39,7 +39,7 @@ jobs:
     dependsOn: helmInit
     environment: "dongkun-canarytest.dongkun"
     variables:
-      partition: $[ dependencies.helmInit.outputs["GetPartition1.truePartition"] ]
+      partition: $[ dependencies.helmInit.outputs['GetPartition1.truePartition'] ]
       buildId: ${{ parameters.buildId }}
       secretName: ${{ parameters.secretName }}
     strategy:
