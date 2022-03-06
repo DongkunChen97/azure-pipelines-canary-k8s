@@ -64,31 +64,24 @@ stages:
         - upload: misc
           artifact: misc
 
-        - task: Kubernetes@1
-          displayName: kubectl apply
-          inputs:
-            connectionType: Azure Resource Manager
-            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-            azureResourceGroup: $(azureResourceGroup)
-            kubernetesCluster: $(kubernetesCluster)
-            useClusterAdmin: true
+#        - task: Kubernetes@1
+#          displayName: kubectl get pods number
+#          inputs:
+#            connectionType: Azure Resource Manager
+#            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+#            azureResourceGroup: $(azureResourceGroup)
+#            kubernetesCluster: $(kubernetesCluster)
+#            command: get
+#            arguments: statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'
 
-        - task: Kubernetes@1
-          displayName: kubectl get pods number
-          inputs:
-            connectionType: Azure Resource Manager
-            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-            azureResourceGroup: $(azureResourceGroup)
-            kubernetesCluster: $(kubernetesCluster)
-            command: get
-            arguments: statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'
+        - script: |
+            az aks get-credentials -g $(azureResourceGroup) -n $(kubernetesCluster) --admin
+            az account set --subscription "PromoteIQ-Playground"
+            kubectl describe statefulset sampleapp -n dongkun
+            describe=`kubectl describe statefulset sampleapp -n dongkun`
+            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
 
-#        - script: |
-#            kubectl describe statefulset sampleapp -n dongkun
-#            describe=`kubectl describe statefulset sampleapp -n dongkun`
-#            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
-#
-#          displayName: test for python
+          displayName: test for python
 
 
 - stage: DeployFirst
