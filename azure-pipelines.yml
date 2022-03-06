@@ -85,7 +85,7 @@ stages:
               describe=`kubectl get statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'`
               echo "##vso[task.setvariable variable=podsNumber;isOutput=true]$describe"
               echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-              echo "$(podsNumber)"
+              echo $(podsNumber)
               echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
               python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
 
