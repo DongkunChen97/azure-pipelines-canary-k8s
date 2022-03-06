@@ -24,7 +24,9 @@ jobs:
 
             - bash: |
                 truePercent=$((100-$(partition)))
-                truePartition=$(($truePercent*$(podNumber)/100))
+                truePodNumber=$(podNumber)
+                echo truePodNumber
+                truePartition=$(($truePercent*$truePodNumber/100))
                 echo $truePartition
                 echo "##vso[task.setVariable variable=truePartition;isoutput=true]$truePartition"
               name: GetPartition
