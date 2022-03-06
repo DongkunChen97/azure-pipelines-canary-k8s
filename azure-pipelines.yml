@@ -73,7 +73,7 @@ stages:
             kubernetesCluster: $(kubernetesCluster)
             useClusterAdmin: true
 
-        - task: Kubermetes@1
+        - task: Kubernetes@1
           displayName: kubectl get pods number
           inputs:
             command: get
