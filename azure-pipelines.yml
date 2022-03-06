@@ -92,7 +92,7 @@ stages:
           name: GetPodsNum
 
         - bash: |
-            echo $[GetPodsNum.podsNumber]
+            echo $[podsNumber]
           displayName: show pods number
           name: ShowPodsNumber
 
