@@ -19,8 +19,11 @@ jobs:
             - script: |
                 export HELM_EXPERIMENTAL_OCI=1
                 helm registry login sharedglobalservices.azurecr.io --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
-                helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
+                helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1 --destination $(System.DefaultWorkingDirectory)
               displayName: pull helm chart
+
+            - bash: |
+                ls $(System.DefaultWorkingDirectory)
 
             - bash: |
                 truePercent=$((100-$(partition)))
