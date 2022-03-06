@@ -86,7 +86,7 @@ stages:
           displayName: get pods number
 
         - script: |
-            echo $(PodsNumber)
+            echo $(podsNumber)
           displayName: show pods number
           name: ShowPodsNumber
 
