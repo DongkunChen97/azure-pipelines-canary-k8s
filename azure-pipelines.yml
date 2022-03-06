@@ -74,12 +74,16 @@ stages:
 #            command: get
 #            arguments: statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'
 
-        - script: |
-            az aks get-credentials -g $(azureResourceGroup) -n $(kubernetesCluster) --admin
-            az account set --subscription "PromoteIQ-Playground"
-            kubectl describe statefulset sampleapp -n dongkun
-            describe=`kubectl describe statefulset sampleapp -n dongkun`
-            python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
+        - task: AzureCLI@2
+          inputs:
+            azureSubription: $(azureSubscriptionEndpoint)
+            scriptType: ps
+            scriptLocation: inlineScript
+            inlineScript: |
+              az aks get-credentials -g $(azureResourceGroup) -n $(kubernetesCluster) --admin
+              kubectl describe statefulset sampleapp -n dongkun
+              describe=`kubectl describe statefulset sampleapp -n dongkun`
+              python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
 
           displayName: test for python
 
