@@ -92,7 +92,8 @@ stages:
           name: GetPodsNum
 
         - bash: |
-            echo $[podsNumber]
+            echo $[dependencies.GetPodsNum.outputs['podsNumber']]
+          dependsOn: GetPodsNum
           displayName: show pods number
           name: ShowPodsNumber
 
