@@ -82,7 +82,7 @@ stages:
   dependsOn: Build
   condition: succeeded()
   variables:
-    podnumber: $[dependencies.Build.outputs['BuildJob.GetPodsNum.podsNumber']]
+    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
 
   jobs:
     - template: templates/helm-deploy.yml
