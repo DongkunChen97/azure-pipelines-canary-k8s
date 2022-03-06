@@ -81,16 +81,14 @@ stages:
             scriptLocation: inlineScript
             inlineScript: |
               az aks get-credentials -g $(azureResourceGroup) -n $(kubernetesCluster) --admin
-              kubectl describe statefulset sampleapp -n dongkun
               describe=`kubectl get statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'`
               echo "##vso[task.setvariable variable=podsNumber;isOutput=true]$describe"
-              echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-              echo $(podsNumber)
-              echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-              python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $describe
+          displayName: get pods number
 
-          displayName: test for python
-
+        - script: |
+            echo $(PodsNumber)
+          displayName: show pods number
+          name: ShowPodsNumber
 
 - stage: DeployFirst
   displayName: Deploy first
