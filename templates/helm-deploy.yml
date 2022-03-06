@@ -23,7 +23,8 @@ jobs:
               displayName: pull helm chart
 
             - bash: |
-                truePartition=$(( $(podNumber) *100 /( 100 - $(partition)) ))
+                truePercent=100-$(partition)
+                truePartition=$(( $(podNumber) *100 /$truePercent ))
                 echo $truePartition
                 echo "##vso[task.setVariable variable=truePartition;isoutput=true]$truePartition"
               name: GetPartition
