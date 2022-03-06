@@ -101,7 +101,6 @@ stages:
       steps:
         - bash: |
             echo $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
-          dependsOn: GetPodsNum
           displayName: show pods number
           name: ShowPodsNumber
 
