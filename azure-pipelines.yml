@@ -19,10 +19,11 @@ variables:
   azureSubscriptionEndpoint: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
   azureResourceGroup: dev-grf-del-iad-rg
   kubernetesCluster: dev-grf-del-iad-aks
-  partitionValueFirstPromote: 8
-  partitionValueSecondPromote: 5
-  partitionValueThirdPromote: 2
-  partitionValueFinalPromote: 0
+  partitionPercentageInDeploy: 10
+  partitionPercentageFirstPromote: 20
+  partitionPercentageSecondPromote: 50
+  partitionPercentageThirdPromote: 80
+  partitionPercentageFinalPromote: 100
 
 
 stages:
@@ -64,16 +65,6 @@ stages:
         - upload: misc
           artifact: misc
 
-#        - task: Kubernetes@1
-#          displayName: kubectl get pods number
-#          inputs:
-#            connectionType: Azure Resource Manager
-#            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-#            azureResourceGroup: $(azureResourceGroup)
-#            kubernetesCluster: $(kubernetesCluster)
-#            command: get
-#            arguments: statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'
-
         - task: AzureCLI@2
           inputs:
             azureSubscription: $(azureSubscriptionEndpoint)
@@ -82,232 +73,89 @@ stages:
             inlineScript: |
               az aks get-credentials -g $(azureResourceGroup) -n $(kubernetesCluster) --admin
               describe=`kubectl get statefulset sampleapp -n dongkun -o jsonpath="{ .spec.replicas }"`
-              echo "++++++++++++++++++++++++++++++++++++++++++++++"
-              echo "$describe"
-              echo "=============================================="
-              echo `kubectl get statefulset sampleapp -n dongkun -o jsonpath="{ .spec.replicas }"`
-              echo "=============================================="
               echo "##vso[task.setvariable variable=podsNumber;isoutput=true]$describe"
           displayName: get pods number
           name: GetPodsNum
-
-
-
-    - job: ShowPodNums
-      displayName: Show the count of pods
-      pool:
-        vmImage: ubuntu-latest
-      dependsOn: Build
-      variables:
-        myVal: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
-      steps:
-        - bash: |
-            echo $(myVal)
-          displayName: show pods number
-          name: ShowPodsNumber
 
 - stage: DeployFirst
   displayName: Deploy first
   dependsOn: Build
   condition: succeeded()
+  variables:
+    podnumber: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
 
   jobs:
-    - deployment: helmDeploy
-      displayName: deploy app by helm
-      environment: "dongkun-canarytest.dongkun"
-
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - script: |
-                  export HELM_EXPERIMENTAL_OCI=1
-                  helm registry login sharedglobalservices.azurecr.io --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
-                  helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
-                displayName: pull helm chart
-
-              - task: KubernetesManifest@0
-                displayName: create secret
-                inputs:
-                  action: createSecret
-                  secretName: $(secretName)
-                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-              - task: HelmDeploy@0
-                displayName: do deploy
-                inputs:
-                  connectionType: "Azure Resource Manager"
-                  azureSubscription: $(azureSubscriptionEndpoint)
-                  azureResourceGroup: $(azureResourceGroup)
-                  kubernetesCluster: $(kubernetesCluster)
-                  namespace: dongkun
-                  useClusterAdmin: true
-                  command: upgrade
-                  chartType: filepath
-                  chartPath: $(System.DefaultWorkingDirectory)/sample-app-0.0.1.tgz
-                  releaseName: rls-sample-app
-                  install: true
-                  waitForExecution: false
-                  arguments: >
-                    --cleanup-on-fail
-                    --set imagePullSecrets=$(secretName)
-                    --set buildId=$(tag)
-
-
-
-#  jobs:
-#    - deployment: Deploycanary
-#      displayName: Deploy canary
-#      pool:
-#        vmImage: ubuntu-latest
-#      environment: 'dongkun-canarytest.dongkun'
-#      strategy:
-#        runOnce:
-#          deploy:
-#            steps:
-#              - task: KubernetesManifest@0
-#                displayName: Create imagePullSecret
-#                inputs:
-#                  action: createSecret
-#                  secretName: azure-pipelines-canary-k8s
-#                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-#
-#              - task: KubernetesManifest@0
-#                displayName: Deploy to Kubernetes cluster
-#                env:
-#                  PARTITION_VALUE: 4
-#                inputs:
-#                  action: 'deploy'
-##                  strategy: "canary"
-##                  percentage: "25"
-#                  manifests: |
-#                    $(Pipeline.Workspace)/manifests/*
-#                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-#                  imagePullSecrets: azure-pipelines-canary-k8s
-#
-#              - task: KubernetesManifest@0
-#                displayName: Deploy Forbio and Service Monitor
-#                inputs:
-#                  action: 'deploy'
-#                  manifests: |
-#                    $(Pipeline.Workspace)/misc/*
-#
-
-
+    - template: templates/helm-deploy.yml
+      parameters:
+        partitionValue: $(partitionPercentageInDeploy)
+        buildId: $(tag)
+        secretName: $(secretName)
+        podNumber: $(podnumber)
 
 - stage: promote1
   displayName: promote stage
-  dependsOn: DeployFirst
+  dependsOn:
+    - DeployFirst
+    - Build
   condition: succeeded()
+  variables:
+    podnumber: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
 
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: $(partitionValueFirstPromote)
+        partitionValue: $(partitionPercentageFirstPromote)
         buildId: $(tag)
         secretName: $(secretName)
-
-#  jobs:
-#    - deployment: promote
-#      displayName: promote deploy
-#      pool:
-#        vmImage: ubuntu-latest
-#      environment: 'dongkun-canarytest.dongkun'
-#      strategy:
-#        runOnce:
-#          deploy:
-#            steps:
-#              - task: KubernetesManifest@0
-#                displayName: promote partition rolling update
-#                env:
-#                  PARTITION_VALUE: 2
-#                inputs:
-#                  action: 'deploy'
-#                  manifests: $(Pipeline.Workspace)/manifests/deployment.yml
-#                  containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-#                  imagePullSecrets: azure-pipelines-canary-k8s
-
-
-
-#
-#- stage: PromoteRejectCanary
-#  displayName: Promote or Reject canary
-#  dependsOn: DeployCanary
-#  condition: succeeded()
-#
-#  jobs:
-#  - deployment: PromoteCanary
-#    displayName: Promote Canary
-#    pool:
-#      vmImage: ubuntu-latest
-#    environment: 'dongkun-canarytest.dongkun'
-#    strategy:
-#      runOnce:
-#        deploy:
-#          steps:
-#          - task: KubernetesManifest@0
-#            displayName: promote canary
-#            inputs:
-#              action: 'promote'
-#              strategy: 'canary'
-#              manifests: '$(Pipeline.Workspace)/manifests/*'
-#              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-#              imagePullSecrets: '$(imagePullSecret)'
-#
-#- stage: RejectCanary
-#  displayName: Reject canary
-#  dependsOn: PromoteRejectCanary
-#  condition: failed()
-#
-#  jobs:
-#  - deployment: RejectCanary
-#    displayName: Reject Canary
-#    pool:
-#      vmImage: ubuntu-latest
-#    environment: 'dongkun-canarytest.dongkun'
-#    strategy:
-#      runOnce:
-#        deploy:
-#          steps:
-#          - task: KubernetesManifest@0
-#            displayName: reject canary
-#            inputs:
-#              action: 'reject'
-#              strategy: 'canary'
-#              manifests: '$(Pipeline.Workspace)/manifests/*'
+        podNumber: $(podnumber)
 
 - stage: promote2
   displayName: second promote stage
-  dependsOn: promote1
+  dependsOn:
+    - promote1
+    - Build
   condition: succeeded()
+  variables:
+    podnumber: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
 
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: $(partitionValueSecondPromote)
+        partitionValue: $(partitionPercentageSecondPromote)
         buildId: $(tag)
         secretName: $(secretName)
+        podNumber: $(podnumber)
 
 - stage: promote3
   displayName: third promote stage
-  dependsOn: promote2
+  dependsOn:
+    - promote2
+    - Build
   condition: succeeded()
+  variables:
+    podnumber: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
 
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: $(partitionValueThirdPromote)
+        partitionValue: $(partitionPercentageThirdPromote)
         buildId: $(tag)
         secretName: $(secretName)
+        podNumber: $(podnumber)
 
 - stage: finalPromote
   displayName: final promote
-  dependsOn: promote3
+  dependsOn:
+    - promote3
+    - Build
   condition: succeeded()
+  variables:
+    podnumber: $[dependencies.Build.outputs['GetPodsNum.podsNumber']]
 
   jobs:
     - template: templates/helm-deploy.yml
       parameters:
-        partitionValue: $(partitionValueFinalPromote)
+        partitionValue: $(partitionPercentageFinalPromote)
         buildId: $(tag)
         secretName: $(secretName)
+        podNumber: $(podnumber)
