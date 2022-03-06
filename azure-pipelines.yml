@@ -82,7 +82,7 @@ stages:
             inlineScript: |
               az aks get-credentials -g $(azureResourceGroup) -n $(kubernetesCluster) --admin
               describe=`kubectl get statefulset sampleapp -n dongkun -o jsonpath='{ .spec.replicas }'`
-              echo "##vso[task.setvariable variable=podsNumber;isOutput=true]$describe"
+              echo "##vso[task.setvariable variable=podsNumber;isoutput=true]$describe"
           displayName: get pods number
 
         - script: |
