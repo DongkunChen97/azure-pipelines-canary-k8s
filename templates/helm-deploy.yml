@@ -11,6 +11,8 @@ jobs:
     variables:
       partition: ${{ parameters.partitionValue }}
       podNumber: ${{ parameters.podNumber }}
+      buildId: ${{ parameters.buildId }}
+      secretname: ${{ parameters.secretName }}
 
     strategy:
       runOnce:
@@ -37,18 +39,6 @@ jobs:
               name: GetPartition1
               displayName: calculate partition
 
-  - deployment: helmDeploy
-    displayName: update
-    dependsOn: helmInit
-    environment: "dongkun-canarytest.dongkun"
-    variables:
-      partition: $[ dependencies.helmInit.outputs['GetPartition1.truePartition'] ]
-      buildId: ${{ parameters.buildId }}
-      secretname: ${{ parameters.secretName }}
-    strategy:
-      runOnce:
-        deploy:
-          steps:
             - bash: |
                 ls $(System.DefaultWorkingDirectory)
             - task: HelmDeploy@0
@@ -68,6 +58,6 @@ jobs:
                 waitForExecution: false
                 arguments: >
                   --cleanup-on-fail
-                  --set partitionValue=$(partition)
+                  --set partitionValue=$(GetPartition1.truePartition)
                   --set buildId=$(buildId)
                   --set imagePullSecrets=$(secretname)
