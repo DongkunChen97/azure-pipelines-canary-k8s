@@ -171,3 +171,17 @@ stages:
         buildId: $(tag)
         secretName: $(secretname)
         podNumber: $(podnumber)
+
+- stage: failhandling
+  displayName: handle failure
+  dependsOn:
+    - DeployFirst
+    - promote1
+    - promote2
+    - promote3
+    - finalPromote
+  condition: or(failed(), canceled())
+
+  jobs:
+    - bash: |
+        echo wow,there are something bad happened
