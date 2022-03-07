@@ -15,7 +15,7 @@ variables:
   imageRepository: 'dongkun-canary-test'
   containerRegistry: sharedglobalservices.azurecr.io
   tag: '$(Build.BuildId)'
-  secretName: "mysecret"
+  secretname: "mysecret"
   azureSubscriptionEndpoint: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
   azureResourceGroup: dev-grf-del-iad-rg
   kubernetesCluster: dev-grf-del-iad-aks
@@ -101,7 +101,7 @@ stages:
       parameters:
         partitionValue: $(partitionPercentageInDeploy)
         buildId: $(tag)
-        secretName: $(secretName)
+        secretName: $(secretname)
         podNumber: $(podnumber)
 
 - stage: promote1
@@ -118,7 +118,7 @@ stages:
       parameters:
         partitionValue: $(partitionPercentageFirstPromote)
         buildId: $(tag)
-        secretName: $(secretName)
+        secretName: $(secretname)
         podNumber: $(podnumber)
 
 - stage: promote2
@@ -135,7 +135,7 @@ stages:
       parameters:
         partitionValue: $(partitionPercentageSecondPromote)
         buildId: $(tag)
-        secretName: $(secretName)
+        secretName: $(secretname)
         podNumber: $(podnumber)
 
 - stage: promote3
@@ -152,7 +152,7 @@ stages:
       parameters:
         partitionValue: $(partitionPercentageThirdPromote)
         buildId: $(tag)
-        secretName: $(secretName)
+        secretName: $(secretname)
         podNumber: $(podnumber)
 
 - stage: finalPromote
@@ -169,5 +169,5 @@ stages:
       parameters:
         partitionValue: $(partitionPercentageFinalPromote)
         buildId: $(tag)
-        secretName: $(secretName)
+        secretName: $(secretname)
         podNumber: $(podnumber)
