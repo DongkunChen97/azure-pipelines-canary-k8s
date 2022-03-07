@@ -18,11 +18,25 @@ jobs:
       runOnce:
         deploy:
           steps:
-            - script: |
-                export HELM_EXPERIMENTAL_OCI=1
-                helm registry login sharedglobalservices.azurecr.io --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
-                helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1 --destination $(System.DefaultWorkingDirectory)
-              displayName: pull helm chart
+#            - script: |
+#                export HELM_EXPERIMENTAL_OCI=1
+#                helm registry login sharedglobalservices.azurecr.io                                                                                  --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
+#                helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1 --destination $(System.DefaultWorkingDirectory)
+#              displayName: pull helm chart
+
+            - task: AzureCLI@2
+              env:
+                HELM_EXPERIMENTAL_OCI: 1
+              displayName: pull helm chart safely
+              inputs:
+                azureSubscription: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  ACCESS_TOKEN=$(az acr login --name sharedglobalservices.azurecr.io --expose-token --output tsv --query accessToken)
+                  echo $ACCESS_TOKEN | helm registry login sharedglobalservices.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
+                  helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
+
 
             - bash: |
                 ls $(System.DefaultWorkingDirectory)

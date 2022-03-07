@@ -25,7 +25,6 @@ variables:
   partitionPercentageThirdPromote: 80
   partitionPercentageFinalPromote: 100
 
-
 stages:
 - stage: Build
   displayName: Build stage
@@ -54,7 +53,7 @@ stages:
 
         - script: |
             export HELM_EXPERIMENTAL_OCI=1
-            helm registry login sharedglobalservices.azurecr.io --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
+            helm registry login sharedglobalservices.azurecr.io                                                                                         --username SharedGlobalServices --password ISkbz+F/5+s6eTfFagmVVHA2Wm03Zv0q
             helm package $(System.DefaultWorkingDirectory)/helm/app
             helm push sample-app-0.0.1.tgz oci://sharedglobalservices.azurecr.io/delivery/helm
           displayName: build helm chart
