@@ -29,7 +29,7 @@ jobs:
                 HELM_EXPERIMENTAL_OCI: 1
               displayName: pull helm chart safely
               inputs:
-                azureSubscription: PromoteIQ-Playground (b558a354-8f0b-4461-8876-9d1e8b56360f)
+                azureSubscription: "hydraSharedGlobalServicesHelmPull"
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
