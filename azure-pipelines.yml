@@ -54,13 +54,14 @@ stages:
         - task: AzureCLI@2
           env:
             HELM_EXPERIMENTAL_OCI: 1
-          scriptType: bash
-          ScriptLocation: inlineScript
-          inlineScript:
-            ACCESS_TOKEN=$(az acr login --name sharedglobalservices.azurecr.io --expose-token --output tsv --query accessToken)
-            echo $ACCESS_TOKEN | helm registry login sharedglobalservices.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
-            helm package $(System.DefaultWorkingDirectory)/helm/app
-            helm push sample-app-0.0.1.tgz oci://sharedglobalservices.azurecr.io/delivery/helm
+          inputs:
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript:
+              ACCESS_TOKEN=$(az acr login --name sharedglobalservices.azurecr.io --expose-token --output tsv --query accessToken)
+              echo $ACCESS_TOKEN | helm registry login sharedglobalservices.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
+              helm package $(System.DefaultWorkingDirectory)/helm/app
+              helm push sample-app-0.0.1.tgz oci://sharedglobalservices.azurecr.io/delivery/helm
           displayName: build helm chart
 
         - upload: manifests
