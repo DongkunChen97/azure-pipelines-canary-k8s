@@ -55,6 +55,7 @@ stages:
           env:
             HELM_EXPERIMENTAL_OCI: 1
           inputs:
+            azureSubscription: "hydraSharedGlobalServicesHelmPull"
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
