@@ -186,5 +186,5 @@ stages:
     - job: failEcho
       displayName: echo when error
       steps:
-        bash: |
-          echo wow,there are something bad happened
+        - bash: |
+            echo wow,there are something bad happened
