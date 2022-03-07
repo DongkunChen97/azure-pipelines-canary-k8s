@@ -9,11 +9,6 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-parameters:
-  - name: firstPartition
-    type: int
-    displayName: partition value
-
 
 variables:
   imageName: dongkun-canary-test
