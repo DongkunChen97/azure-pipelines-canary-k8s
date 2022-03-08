@@ -134,15 +134,10 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
-              echo 1
-              echo 2
               helm history rls-sample-app -n dongkun -o json
-              echo 3
               historyJson=`helm history rls-sample-app -n dongkun -o json`
-              echo 4
               echo $historyJson
               latestStableVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $historyJson`
-              echo 5
               echo $latestStableVersion
               echo "##vso[task.setvariable variable=stableVersion;isoutput=true]$latestStableVersion"
           displayName: get stable revision
