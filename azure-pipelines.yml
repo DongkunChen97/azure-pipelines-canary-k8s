@@ -94,6 +94,8 @@ stages:
           inputs:
             connectionType: Azure Resource Manager
             azureSubscription: $(azureSubscriptionEndpoint)
+            azureResourceGroup: $(azureResourceGroup)
+            kubernetesCluster: $(kubernetesCluster)
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
