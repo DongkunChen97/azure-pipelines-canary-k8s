@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 import sys
+import json
 
 
-def GetPodsCount(sVersion):
-    lVersion = sVersion.split(".")
-    if len(lVersion) != 3:
-        print("0.0.0")
-    else:
-        lVersion[-1] = str(int(lVersion[-1])+1)
-        sNewVersion = ".".join(lVersion)
-        print(sNewVersion)
+def GetPodsCount(sJson):
+    """ decode the latest revision """
+    lHistory = json.loads(sJson)
+    dLatestVersion = lHistory[-1]
+    sLatestVersion = dLatestVersion["revision"]
+    print(sLatestVersion)
+
 
 
 if __name__ == '__main__':
-    sVersion = sys.argv[1]
-    # sVersion = "0.0.1"
-    GetPodsCount(sVersion)
+    sJson = sys.argv[1]
+    # sJson = "0.0.1"
+    # sJson = '[{"revision":66, "name":"cdk"}]'
+    GetPodsCount(sJson)
