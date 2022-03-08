@@ -129,11 +129,11 @@ stages:
           env:
             HELM_EXPERIMENTAL_OCI: 1
           inputs:
-            azureSubscription: "hydraSharedGlobalServicesHelmPull"
+            connectionType: Azure Resource Manager
+            azureSubscription: "piqplayground"
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
-              helm registry login sharedglobalservices.azurecr.io --username $(acrUsername) --password $(acrPassword)
               helm history rls-sample-app -n dongkun -o json
               historyJson=`helm history rls-sample-app -n dongkun -o json`
               echo $historyJson
@@ -270,7 +270,7 @@ stages:
   condition: or(failed(), canceled())
   variables:
     podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-    stableversion: $[stageDependencies.Build.getVersionJob.outputs['getVersion.stableVersion']]
+    stableversion: $[stageDependencies.Build.BuildJob.outputs['getVersion.stableVersion']]
 
   jobs:
     - job: failEcho
