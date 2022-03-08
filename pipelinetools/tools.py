@@ -3,20 +3,18 @@ import sys
 import json
 
 
-def GetPodsCount(sJson):
+def GetPodsCount(sFile):
     """ decode the latest revision """
-
+    oFile = open(sFile, "r")
+    sJson = oFile.read()
     lHistory = json.loads(sJson)
-    dLatestVersion = lHistory[0]
+    dLatestVersion = lHistory[-1]
     sLatestVersion = dLatestVersion["revision"]
     print(sLatestVersion)
 
-
-
 if __name__ == '__main__':
-    sJson = sys.argv[1]
+    sFile = sys.argv[1]
     # print(sJson)
     # sJson = "0.0.1"
     # sJson = '[{"revision":66, "name":"cdk"}]'
-    print(len(sJson))
-    GetPodsCount(sJson)
+    GetPodsCount(sFile)
