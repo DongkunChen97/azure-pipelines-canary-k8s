@@ -99,6 +99,7 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
+              helm list -n dongkun
               helm history rls-sample-app -n dongkun -o json
               historyJson=`helm history rls-sample-app -n dongkun -o json`
               echo $historyJson
