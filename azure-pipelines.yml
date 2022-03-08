@@ -226,7 +226,7 @@ stages:
         - task: AzureCLI@2
           displayName: record the new version
           inputs:
-            azureSubscription: $
+            azureSubscription: $(azureSubscriptionEndpoint)
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
