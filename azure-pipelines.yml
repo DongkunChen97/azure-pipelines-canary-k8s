@@ -109,6 +109,17 @@ stages:
         - script: |
             echo $(stableVersion)
 
+        - task: AzureCLI@2
+          displayName: test record the new version
+          inputs:
+            azureSubscription: $(azureSubscriptionEndpoint)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              az devops login --organization https://dev.azure.com/PromoteIQ/
+              az pipelines variable-group variable update --group-id 106 --name stable_version --value 999 --org https://dev.azure.com/PromoteIQ/ --project Delivery-Hydra
+
+
 - stage: DeployFirst
   displayName: Deploy first
   dependsOn: Build
