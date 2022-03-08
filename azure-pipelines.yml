@@ -124,23 +124,24 @@ stages:
           displayName: get pods number
           name: GetPodsNum
 
-    - deployment: getVersionJob
-      displayName: get current stable version
-      environment: "dongkun-canarytest.dongkun"
 
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - bash: |
-                  helm history rls-sample-app -n dongkun -o json
-                  historyJson=`helm history rls-sample-app -n dongkun -o json`
-                  echo $historyJson
-                  latestStableVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $historyJson`
-                  echo $latestStableVersion
-                  echo "##vso[task.setvariable variable=stableVersion;isoutput=true]$latestStableVersion"
-                displayName: get stable revision
-                name: getVersion
+        - task: AzureCLI@2
+          env:
+            HELM_EXPERIMENTAL_OCI: 1
+          inputs:
+            azureSubscription: "hydraSharedGlobalServicesHelmPull"
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript:
+              helm registry login sharedglobalservices.azurecr.io --username $(acrUsername) --password $(acrPassword)
+              helm history rls-sample-app -n dongkun -o json
+              historyJson=`helm history rls-sample-app -n dongkun -o json`
+              echo $historyJson
+              latestStableVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $historyJson`
+              echo $latestStableVersion
+              echo "##vso[task.setvariable variable=stableVersion;isoutput=true]$latestStableVersion"
+          displayName: get stable revision
+          name: getVersion
 
 #        - task: AzureCLI@2
 #          displayName: test record the new version
