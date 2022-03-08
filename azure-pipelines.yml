@@ -99,13 +99,15 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
+              echo "++++++++++++++"
               helm list -n dongkun
-              helm history rls-sample-app -n dongkun -o json
-              historyJson=`helm history rls-sample-app -n dongkun -o json`
-              echo $historyJson
-              latestStableVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $historyJson`
-              echo $latestStableVersion
-              echo "##vso[task.setvariable variable=stableVersion;isoutput=true]$latestStableVersion"
+              echo "++++++++++++++"
+#              helm history rls-sample-app -n dongkun -o json
+#              historyJson=`helm history rls-sample-app -n dongkun -o json`
+#              echo $historyJson
+#              latestStableVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $historyJson`
+#              echo $latestStableVersion
+#              echo "##vso[task.setvariable variable=stableVersion;isoutput=true]$latestStableVersion"
           displayName: get stable revision
           name: getVersion
 
