@@ -99,9 +99,9 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
-              echo "++++++++++++++"
+              echo ++++++++++++++
               helm list -n dongkun
-              echo "++++++++++++++"
+              echo ++++++++++++++
 #              helm history rls-sample-app -n dongkun -o json
 #              historyJson=`helm history rls-sample-app -n dongkun -o json`
 #              echo $historyJson
