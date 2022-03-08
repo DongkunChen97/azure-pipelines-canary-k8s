@@ -291,6 +291,22 @@ stages:
             command: rollback
             arguments: rls-sample-app $(stableversion) -n dongkun
 
+
+
+        - task: AzureCLI@2
+          env:
+            HELM_EXPERIMENTAL_OCI: 1
+          inputs:
+            connectionType: Azure Resource Manager
+            azureSubscription: "piqplayground"
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              helm rollback rls-sample-app $(stableversion) -n dongkun
+          displayName: rollback to stable revision
+          name: rollback
+
+
 #- stage: recordNewVersion
 #  displayName: record new stable version
 #  dependsOn: finalPromote
