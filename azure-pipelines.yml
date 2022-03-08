@@ -89,13 +89,9 @@ stages:
           displayName: build and push helm chart
 
         - task: AzureCLI@2
-          env:
-            HELM_EXPERIMENTAL_OCI: 1
           inputs:
             connectionType: Azure Resource Manager
-            azureSubscription: $(azureSubscriptionEndpoint)
-            azureResourceGroup: $(azureResourceGroup)
-            kubernetesCluster: $(kubernetesCluster)
+            azureSubscription: "dev-grf-del-iad-aks-dongkun"
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
