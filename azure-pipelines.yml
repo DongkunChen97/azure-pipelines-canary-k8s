@@ -195,12 +195,15 @@ stages:
 - stage: failhandling
   displayName: handle failure
   dependsOn:
+    - Build
     - DeployFirst
     - promote1
     - promote2
     - promote3
     - finalPromote
   condition: or(failed(), canceled())
+  variables:
+    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
 
   jobs:
     - job: failEcho
@@ -210,6 +213,13 @@ stages:
             echo wow,there are something bad happened
             echo $(stableVersion)
           displayName: get version we should roll back to
+
+    - template: templates/helm-deploy.yml
+      parameters:
+        partitionValue: 100
+        buildId: $(stableVersion)
+        secretName: $(secretname)
+        podNumber: $(podnumber)
 
 - stage: recordNewVersion
   displayName: record new stable version
@@ -225,4 +235,4 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
-              az pipelines variable-group variable update --group-id 106 --name stable_version --value $(tag)
+              az pipelines variable-group variable update --group-id 106 --name stable_version --value $(tag) --org https://dev.azure.com/PromoteIQ/ --project Delivery-Hydra
