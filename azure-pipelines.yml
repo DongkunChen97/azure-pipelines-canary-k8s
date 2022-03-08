@@ -263,14 +263,14 @@ stages:
             echo $(stableVersion)
           displayName: get version we should roll back to
 
-    - task: HelmDeploy@0
-      displayName: helm rollback
-      inputs:
-        azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
-        azureResourceGroup: $(azureResourceGroup)
-        kubernetesCluster: $(kubernetesCluster)
-        command: rollback
-        arguments: rls-sample-app $(stableversion) -n dongkun
+        - task: HelmDeploy@0
+          displayName: helm rollback
+          inputs:
+            azureSubscriptionEndpoint: $(azureSubscriptionEndpoint)
+            azureResourceGroup: $(azureResourceGroup)
+            kubernetesCluster: $(kubernetesCluster)
+            command: rollback
+            arguments: rls-sample-app $(stableversion) -n dongkun
 
 #- stage: recordNewVersion
 #  displayName: record new stable version
