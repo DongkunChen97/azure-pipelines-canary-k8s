@@ -93,7 +93,7 @@ stages:
             HELM_EXPERIMENTAL_OCI: 1
           inputs:
             connectionType: Azure Resource Manager
-            azureSubscription: "dongkun-canarytest"
+            azureSubscription: "dongkun-canarytest-k8s"
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
