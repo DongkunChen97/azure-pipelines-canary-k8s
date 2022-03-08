@@ -215,13 +215,14 @@ stages:
   dependsOn: finalPromote
   jobs:
     - job: calculateNewVersion
-      displayName: calculate new stable version
+      displayName: calculate and set
       steps:
         - bash: |
-            newVersion=$(( $(stableVersion) + 0.01 ))
             echo $(stableVersion)
+            newVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $(stableVersion)`
             echo $newVersion
             echo "##vso[task.setvariable variable=newVersion]$newVersion"
+          displayName:
         
         - task: AzureCLI@2
           displayName: record the new version

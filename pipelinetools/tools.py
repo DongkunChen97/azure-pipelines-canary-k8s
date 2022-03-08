@@ -2,20 +2,17 @@
 import sys
 
 
-def GetPodsCount(sDescribe):
-    lOutput = sDescribe.split("\n")
-    for sLine in lOutput:
-        if sLine.startswith("Replicas:"):
-            lWords = sLine.split(" ")
-            sPodsCount = lWords[-2]
+def GetPodsCount(sVersion):
+    lVersion = sVersion.split(".")
+    if len(lVersion) != 3:
+        print("0.0.0")
+    else:
+        lVersion[-1] = str(int(lVersion[-1])+1)
+        sNewVersion = ".".join(lVersion)
+        print(sNewVersion)
 
-            if sPodsCount.isalnum():
-                oFile = open("result.file", "w")
-                oFile.write(sPodsCount)
-                oFile.close()
-                print("99999999999999999999999")
-                return
 
 if __name__ == '__main__':
-    sDescribe = sys.argv[1]
-    GetPodsCount(sDescribe)
+    sVersion = sys.argv[1]
+    # sVersion = "0.0.1"
+    GetPodsCount(sVersion)
