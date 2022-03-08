@@ -99,7 +99,6 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
-              echo ++++++++++++++
               helm list -n dongkun
               echo ++++++++++++++
 #              helm history rls-sample-app -n dongkun -o json
