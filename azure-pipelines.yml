@@ -93,10 +93,13 @@ stages:
             HELM_EXPERIMENTAL_OCI: 1
           inputs:
             connectionType: Azure Resource Manager
-            azureSubscription: "dongkun-canarytest-k8s"
+            azureSubscription: $(azureSubscriptionEndpoint)
+            azureResourceGroup: $(azureResourceGroup)
+            kubernetesCluster: $(kubernetesCluster)
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript:
+              helm history rls-sample-app -n dongkun -o json
               historyJson=`helm history rls-sample-app -n dongkun -o json`
               echo $historyJson
               latestStableVersion=`python $(System.DefaultWorkingDirectory)/pipelinetools/tools.py $historyJson`
