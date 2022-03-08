@@ -115,27 +115,27 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
-              az pipelines variable-group variable update --group-id 106 --name stable_version --value 999 --org https://dev.azure.com/PromoteIQ/ --project Delivery-Hydra
+              az pipelines variable-group variable update --group-id 107 --name stable_version --value 999 --org https://dev.azure.com/PromoteIQ/ --project Delivery-Hydra
 
-        - bash: |
-             curl -fL -XPUT -H "Authorization:Bearer $(System.AccessToken)" -H "Content-Type:application/json" \
-             -d '{
-               "id": "106",
-               "type": "Vsts",
-               "name": "stable_version",
-               "variables": {
-                 "FOO_VARIABLE_GROUP_ID": {
-                   "isSecret": false,
-                   "value": "106"
-                 },
-                 "FOO": {
-                   "isSecret": false,
-                   "value": "9999"
-                 }
-               }
-             }' \
-             https://dev.azure.com/PromoteIQ/Delivery-Hydra/_apis/distributedtask/variablegroups/106?api-version=5.0-preview.1
-          displayName: 'Set variable in variable group to current foo'
+#        - bash: |
+#             curl -fL -XPUT -H "Authorization:Bearer $(System.AccessToken)" -H "Content-Type:application/json" \
+#             -d '{
+#               "id": "106",
+#               "type": "Vsts",
+#               "name": "stable_version",
+#               "variables": {
+#                 "FOO_VARIABLE_GROUP_ID": {
+#                   "isSecret": false,
+#                   "value": "106"
+#                 },
+#                 "FOO": {
+#                   "isSecret": false,
+#                   "value": "9999"
+#                 }
+#               }
+#             }' \
+#             https://dev.azure.com/PromoteIQ/Delivery-Hydra/_apis/distributedtask/variablegroups/106?api-version=5.0-preview.1
+#          displayName: 'Set variable in variable group to current foo'
 
 
 - stage: DeployFirst
