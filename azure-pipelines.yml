@@ -130,7 +130,7 @@ stages:
                  },
                  "FOO": {
                    "isSecret": false,
-                   "value": "999"
+                   "value": "9999"
                  }
                }
              }' \
