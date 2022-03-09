@@ -1,5 +1,5 @@
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
   name: sampleapp
   labels:
@@ -8,5 +8,5 @@ spec:
   selector:
     matchLabels:
       app: sampleapp
-  endpoints:
+  podMetricsEndpoints:
   - port: metrics

@@ -31,12 +31,12 @@ variables:
     value: dev-grf-del-iad-rg
   - name: kubernetesCluster
     value: dev-grf-del-iad-aks
-  - name: partitionPercentageInDeploy
-    value: 10
-  - name: partitionPercentageFirstPromote
-    value: 50
-  - name: partitionPercentageFinalPromote
-    value: 100
+  - name: partitionValueSet
+    type: object
+    value:
+      - 10
+      - 50
+      - 80
 
 
 #  - name: partitionPercentageSecondPromote
@@ -177,38 +177,53 @@ stages:
 #             https://dev.azure.com/PromoteIQ/Delivery-Hydra/_apis/distributedtask/variablegroups/106?api-version=5.0-preview.1
 #          displayName: 'Set variable in variable group to current foo'
 
+- ${{ each partitionValue in variables.partitionValueSet }}:
+    - stage: deploy${{partition}}
+      displayName: upgrade ${{partition}} % of pods
+      dependsOn: Build
+      condition: succeeded()
+      variables:
+        podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
 
-- stage: DeployFirst
-  displayName: Deploy first
-  dependsOn: Build
-  condition: succeeded()
-  variables:
-    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+      jobs:
+        - template: templates/helm-deploy.yml
+          parameters:
+            partitionValue: ${{partition}}
+            buildId: $(tag)
+            secretName: $(secretname)
+            podNumber: $(podnumber)
 
-  jobs:
-    - template: templates/helm-deploy.yml
-      parameters:
-        partitionValue: $(partitionPercentageInDeploy)
-        buildId: $(tag)
-        secretName: $(secretname)
-        podNumber: $(podnumber)
-
-- stage: promote1
-  displayName: promote stage
-  dependsOn:
-    - DeployFirst
-    - Build
-  condition: succeeded()
-  variables:
-    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-
-  jobs:
-    - template: templates/helm-deploy.yml
-      parameters:
-        partitionValue: $(partitionPercentageFirstPromote)
-        buildId: $(tag)
-        secretName: $(secretname)
-        podNumber: $(podnumber)
+#- stage: DeployFirst
+#  displayName: Deploy first
+#  dependsOn: Build
+#  condition: succeeded()
+#  variables:
+#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+#
+#  jobs:
+#    - template: templates/helm-deploy.yml
+#      parameters:
+#        partitionValue: $(partitionPercentageInDeploy)
+#        buildId: $(tag)
+#        secretName: $(secretname)
+#        podNumber: $(podnumber)
+#
+#- stage: promote1
+#  displayName: promote stage
+#  dependsOn:
+#    - DeployFirst
+#    - Build
+#  condition: succeeded()
+#  variables:
+#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+#
+#  jobs:
+#    - template: templates/helm-deploy.yml
+#      parameters:
+#        partitionValue: $(partitionPercentageFirstPromote)
+#        buildId: $(tag)
+#        secretName: $(secretname)
+#        podNumber: $(podnumber)
 
 #- stage: promote2
 #  displayName: second promote stage
@@ -244,30 +259,29 @@ stages:
 #        secretName: $(secretname)
 #        podNumber: $(podnumber)
 #
-- stage: finalPromote
-  displayName: final promote
-  dependsOn:
-    - promote1
-    - Build
-  condition: succeeded()
-  variables:
-    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-
-  jobs:
-    - template: templates/helm-deploy.yml
-      parameters:
-        partitionValue: $(partitionPercentageFinalPromote)
-        buildId: $(tag)
-        secretName: $(secretname)
-        podNumber: $(podnumber)
+#- stage: finalPromote
+#  displayName: final promote
+#  dependsOn:
+#    - promote1
+#    - Build
+#  condition: succeeded()
+#  variables:
+#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+#
+#  jobs:
+#    - template: templates/helm-deploy.yml
+#      parameters:
+#        partitionValue: $(partitionPercentageFinalPromote)
+#        buildId: $(tag)
+#        secretName: $(secretname)
+#        podNumber: $(podnumber)
 
 - stage: failhandling
   displayName: handle failure
   dependsOn:
     - Build
-    - DeployFirst
-    - promote1
-    - finalPromote
+    - ${{ echo partition in variables.partitionValueSet}}:
+        - deploy${{partition}}
   condition: or(failed(), canceled())
   variables:
     podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]

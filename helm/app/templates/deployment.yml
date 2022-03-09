@@ -29,6 +29,8 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
+          name: metrics
         - containerPort: 8080
+          name: http
 
 
