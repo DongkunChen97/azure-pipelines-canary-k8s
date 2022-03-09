@@ -280,7 +280,7 @@ stages:
   displayName: handle failure
   dependsOn:
     - Build
-    - ${{ echo partition in variables.partitionValueSet}}:
+    - ${{ each partition in variables.partitionValueSet}}:
         - deploy${{partition}}
   condition: or(failed(), canceled())
   variables:
