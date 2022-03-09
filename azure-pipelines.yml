@@ -40,12 +40,6 @@ variables:
   - name: kubernetesCluster
     value: dev-grf-del-iad-aks
 
-
-#  - name: partitionPercentageSecondPromote
-#    value: 50
-#  - name: partitionPercentageThirdPromote
-#    value: 80
-
 stages:
 - stage: Build
   displayName: Build stage
@@ -148,6 +142,22 @@ stages:
           displayName: get stable revision
           name: getVersion
 
+    - deployment: deployPrometheus
+      displayName: deploy prometheus
+      pool:
+        vmImage: ubuntu-latest
+      environment: "dongkun-canarytest.dongkun"
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: KubernetesManifest@0
+                displayName: deploy prometheus
+                inputs:
+                  action: deploy
+                  manifests: |
+                    $(Pipeline.Workspace)/misc/*
+
 #        - task: AzureCLI@2
 #          displayName: test record the new version
 #          env:
@@ -194,89 +204,6 @@ stages:
             buildId: $(tag)
             secretName: $(secretname)
             podNumber: $(podnumber)
-
-#- stage: DeployFirst
-#  displayName: Deploy first
-#  dependsOn: Build
-#  condition: succeeded()
-#  variables:
-#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-#
-#  jobs:
-#    - template: templates/helm-deploy.yml
-#      parameters:
-#        partitionValue: $(partitionPercentageInDeploy)
-#        buildId: $(tag)
-#        secretName: $(secretname)
-#        podNumber: $(podnumber)
-#
-#- stage: promote1
-#  displayName: promote stage
-#  dependsOn:
-#    - DeployFirst
-#    - Build
-#  condition: succeeded()
-#  variables:
-#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-#
-#  jobs:
-#    - template: templates/helm-deploy.yml
-#      parameters:
-#        partitionValue: $(partitionPercentageFirstPromote)
-#        buildId: $(tag)
-#        secretName: $(secretname)
-#        podNumber: $(podnumber)
-
-#- stage: promote2
-#  displayName: second promote stage
-#  dependsOn:
-#    - promote1
-#    - Build
-#  condition: succeeded()
-#  variables:
-#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-#
-#  jobs:
-#    - template: templates/helm-deploy.yml
-#      parameters:
-#        partitionValue: $(partitionPercentageSecondPromote)
-#        buildId: $(tag)
-#        secretName: $(secretname)
-#        podNumber: $(podnumber)
-
-#- stage: promote3
-#  displayName: third promote stage
-#  dependsOn:
-#    - promote2
-#    - Build
-#  condition: succeeded()
-#  variables:
-#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-#
-#  jobs:
-#    - template: templates/helm-deploy.yml
-#      parameters:
-#        partitionValue: $(partitionPercentageThirdPromote)
-#        buildId: $(tag)
-#        secretName: $(secretname)
-#        podNumber: $(podnumber)
-#
-#- stage: finalPromote
-#  displayName: final promote
-#  dependsOn:
-#    - promote1
-#    - Build
-#  condition: succeeded()
-#  variables:
-#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-#
-#  jobs:
-#    - template: templates/helm-deploy.yml
-#      parameters:
-#        partitionValue: $(partitionPercentageFinalPromote)
-#        buildId: $(tag)
-#        secretName: $(secretname)
-#        podNumber: $(podnumber)
 
 - stage: failhandling
   displayName: handle failure
