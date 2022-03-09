@@ -180,8 +180,8 @@ stages:
 #          displayName: 'Set variable in variable group to current foo'
 
 - ${{ each partitionValue in parameters.partitionValueSet }}:
-    - stage: deploy${{partition}}
-      displayName: upgrade ${{partition}} % of pods
+    - stage: deploy${{partitionValue}}
+      displayName: upgrade ${{partitionValue}} % of pods
       dependsOn: Build
       condition: succeeded()
       variables:
@@ -190,7 +190,7 @@ stages:
       jobs:
         - template: templates/helm-deploy.yml
           parameters:
-            partitionValue: ${{partition}}
+            partitionValue: ${{partitionValue}}
             buildId: $(tag)
             secretName: $(secretname)
             podNumber: $(podnumber)
@@ -282,8 +282,8 @@ stages:
   displayName: handle failure
   dependsOn:
     - Build
-    - ${{ each partition in parameters.partitionValueSet}}:
-        - deploy${{partition}}
+    - ${{ each partitionValue in parameters.partitionValueSet}}:
+        - deploy${{partitionValue}}
   condition: or(failed(), canceled())
   variables:
     podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
