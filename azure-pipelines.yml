@@ -142,22 +142,22 @@ stages:
           displayName: get stable revision
           name: getVersion
 
-    - deployment: deployPrometheus
-      dependsOn: BuildJob
-      displayName: deploy prometheus
-      pool:
-        vmImage: ubuntu-latest
-      environment: "dongkun-canarytest.dongkun"
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: KubernetesManifest@0
-                displayName: deploy prometheus
-                inputs:
-                  action: deploy
-                  manifests: |
-                    $(Pipeline.Workspace)/misc/*
+#    - deployment: deployPrometheus
+#      dependsOn: BuildJob
+#      displayName: deploy prometheus
+#      pool:
+#        vmImage: ubuntu-latest
+#      environment: "dongkun-canarytest.dongkun"
+#      strategy:
+#        runOnce:
+#          deploy:
+#            steps:
+#              - task: KubernetesManifest@0
+#                displayName: deploy prometheus
+#                inputs:
+#                  action: deploy
+#                  manifests: |
+#                    $(Pipeline.Workspace)/misc/*
 
 #        - task: AzureCLI@2
 #          displayName: test record the new version
