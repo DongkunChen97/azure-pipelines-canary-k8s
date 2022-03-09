@@ -34,13 +34,15 @@ variables:
   - name: partitionPercentageInDeploy
     value: 10
   - name: partitionPercentageFirstPromote
-    value: 20
-  - name: partitionPercentageSecondPromote
     value: 50
-  - name: partitionPercentageThirdPromote
-    value: 80
   - name: partitionPercentageFinalPromote
     value: 100
+
+
+#  - name: partitionPercentageSecondPromote
+#    value: 50
+#  - name: partitionPercentageThirdPromote
+#    value: 80
 
 stages:
 - stage: Build
@@ -208,44 +210,44 @@ stages:
         secretName: $(secretname)
         podNumber: $(podnumber)
 
-- stage: promote2
-  displayName: second promote stage
-  dependsOn:
-    - promote1
-    - Build
-  condition: succeeded()
-  variables:
-    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+#- stage: promote2
+#  displayName: second promote stage
+#  dependsOn:
+#    - promote1
+#    - Build
+#  condition: succeeded()
+#  variables:
+#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+#
+#  jobs:
+#    - template: templates/helm-deploy.yml
+#      parameters:
+#        partitionValue: $(partitionPercentageSecondPromote)
+#        buildId: $(tag)
+#        secretName: $(secretname)
+#        podNumber: $(podnumber)
 
-  jobs:
-    - template: templates/helm-deploy.yml
-      parameters:
-        partitionValue: $(partitionPercentageSecondPromote)
-        buildId: $(tag)
-        secretName: $(secretname)
-        podNumber: $(podnumber)
-
-- stage: promote3
-  displayName: third promote stage
-  dependsOn:
-    - promote2
-    - Build
-  condition: succeeded()
-  variables:
-    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
-
-  jobs:
-    - template: templates/helm-deploy.yml
-      parameters:
-        partitionValue: $(partitionPercentageThirdPromote)
-        buildId: $(tag)
-        secretName: $(secretname)
-        podNumber: $(podnumber)
-
+#- stage: promote3
+#  displayName: third promote stage
+#  dependsOn:
+#    - promote2
+#    - Build
+#  condition: succeeded()
+#  variables:
+#    podnumber: $[stageDependencies.Build.BuildJob.outputs['GetPodsNum.podsNumber']]
+#
+#  jobs:
+#    - template: templates/helm-deploy.yml
+#      parameters:
+#        partitionValue: $(partitionPercentageThirdPromote)
+#        buildId: $(tag)
+#        secretName: $(secretname)
+#        podNumber: $(podnumber)
+#
 - stage: finalPromote
   displayName: final promote
   dependsOn:
-    - promote3
+    - promote1
     - Build
   condition: succeeded()
   variables:
@@ -265,8 +267,6 @@ stages:
     - Build
     - DeployFirst
     - promote1
-    - promote2
-    - promote3
     - finalPromote
   condition: or(failed(), canceled())
   variables:

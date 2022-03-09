@@ -37,10 +37,6 @@ jobs:
                   echo $ACCESS_TOKEN | helm registry login sharedglobalservices.azurecr.io -u 00000000-0000-0000-0000-000000000000 --password-stdin
                   helm pull oci://sharedglobalservices.azurecr.io/delivery/helm/sample-app --version 0.0.1
 
-
-            - bash: |
-                ls $(System.DefaultWorkingDirectory)
-
             - bash: |
                 truePercent=$((100-$(partition)))
                 truePodNumber=$(podNumber)
@@ -53,8 +49,6 @@ jobs:
               name: GetPartition1
               displayName: calculate partition
 
-            - bash: |
-                ls $(System.DefaultWorkingDirectory)
             - task: HelmDeploy@0
               displayName: do deploy
               inputs:
