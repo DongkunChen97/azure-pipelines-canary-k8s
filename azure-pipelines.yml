@@ -9,6 +9,14 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+parameters:
+  - name: partitionValueSet
+    type: object
+    default:
+      - 10
+      - 50
+      - 100
+
 variables:
   - group: canary-rollback
   - name: stableVersion
@@ -31,12 +39,6 @@ variables:
     value: dev-grf-del-iad-rg
   - name: kubernetesCluster
     value: dev-grf-del-iad-aks
-  - name: partitionValueSet
-    type: object
-    value:
-      - 10
-      - 50
-      - 80
 
 
 #  - name: partitionPercentageSecondPromote
@@ -177,7 +179,7 @@ stages:
 #             https://dev.azure.com/PromoteIQ/Delivery-Hydra/_apis/distributedtask/variablegroups/106?api-version=5.0-preview.1
 #          displayName: 'Set variable in variable group to current foo'
 
-- ${{ each partitionValue in variables.partitionValueSet }}:
+- ${{ each partitionValue in parameters.partitionValueSet }}:
     - stage: deploy${{partition}}
       displayName: upgrade ${{partition}} % of pods
       dependsOn: Build
@@ -280,7 +282,7 @@ stages:
   displayName: handle failure
   dependsOn:
     - Build
-    - ${{ each partition in variables.partitionValueSet}}:
+    - ${{ each partition in parameters.partitionValueSet}}:
         - deploy${{partition}}
   condition: or(failed(), canceled())
   variables:
@@ -288,8 +290,8 @@ stages:
     stableversion: $[stageDependencies.Build.BuildJob.outputs['getVersion.stableVersion']]
 
   jobs:
-    - job: failEcho
-      displayName: echo when error
+    - job: failhandle
+      displayName: handle fail
       steps:
         - bash: |
             echo wow,there are something bad happened
