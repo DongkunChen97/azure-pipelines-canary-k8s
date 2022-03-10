@@ -13,7 +13,7 @@ parameters:
   - name: partitionValueSet
     type: object
     default:
-      - 10
+      - 20
       - 50
       - 100
 
